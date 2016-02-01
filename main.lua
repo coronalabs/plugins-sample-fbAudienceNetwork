@@ -61,27 +61,6 @@ interstitialPrompt:setFillColor( 0.8 )
 interstitialPrompt.alpha = 0
 
 
--- Function to prompt/alert user for setup
-local function checkSetup()
-
-	if ( system.getInfo( "environment" ) ~= "device" ) then return end
-
-	if ( tostring(bannerPlacementID) == "[YOUR-BANNER-PLACEMENT-ID]" or tostring(interstitialPlacementID) == "[YOUR-INTERSTITIAL-PLACEMENT-ID]" ) then
-		local alert = native.showAlert( "Important", 'Confirm that you have specified your Facebook placement IDs within "main.lua" on lines 28-29. Proceed to the Facebook guide for instructions.', { "OK", "guide" },
-			function( event )
-				if ( event.action == "clicked" and event.index == 2 ) then
-					system.openURL( "https://developers.facebook.com/docs/audience-network/getting-started" )
-				end
-			end )
-	elseif ( tostring(deviceHash) == "[YOUR-DEVICE-HASH-ID]" ) then
-		fbAudienceNetwork.load( "banner", bannerPlacementID )
-		local alert = native.showAlert( "Important", 'For testing the Facebook Audience Network, you must follow Facebook protocol by gathering this device’s hash ID. With this device connected, find the "Test mode device hash" within the device console log, enter it within "main.lua" on line 34, and then build/run this sample again.', { "OK" } )
-	else
-		setupComplete = true
-	end
-end
-
-
 -- Function to update button visibility/state
 local function updateUI( params )
 
@@ -158,6 +137,28 @@ local function adListener( event )
 		elseif ( event.type == "interstitial" ) then
 			updateUI( { enable={ "loadInterstitial" }, disable={ "showInterstitial" }, interstitialPromptTo="loadInterstitial" } )
 		end
+	end
+end
+
+
+-- Function to prompt/alert user for setup
+local function checkSetup()
+
+	if ( system.getInfo( "environment" ) ~= "device" ) then return end
+
+	if ( tostring(bannerPlacementID) == "[YOUR-BANNER-PLACEMENT-ID]" or tostring(interstitialPlacementID) == "[YOUR-INTERSTITIAL-PLACEMENT-ID]" ) then
+		local alert = native.showAlert( "Important", 'Confirm that you have specified your Facebook placement IDs within "main.lua" on lines 28-29. Proceed to the Facebook guide for instructions.', { "OK", "guide" },
+			function( event )
+				if ( event.action == "clicked" and event.index == 2 ) then
+					system.openURL( "https://developers.facebook.com/docs/audience-network/getting-started" )
+				end
+			end )
+	elseif ( tostring(deviceHash) == "[YOUR-DEVICE-HASH-ID]" ) then
+		fbAudienceNetwork.init( adListener )
+		fbAudienceNetwork.load( "banner", bannerPlacementID )
+		local alert = native.showAlert( "Important", 'For testing the Facebook Audience Network, you must follow Facebook protocol by gathering this device’s hash ID. With this device connected, find the "Test mode device hash" within the device console log, enter it within "main.lua" on line 34, and then build/run this sample again.', { "OK" } )
+	else
+		setupComplete = true
 	end
 end
 
