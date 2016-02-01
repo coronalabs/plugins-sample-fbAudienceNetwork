@@ -49,6 +49,7 @@ local menuButtons = {
 	showInterstitial = { label="show interstitial ad", y=335, fill={ 0.14,0.34,0.54,1 } }
 }
 
+-- Set local variables
 local setupComplete = false
 
 -- Create objects to visually prompt action
@@ -66,7 +67,7 @@ local function checkSetup()
 	if ( system.getInfo( "environment" ) ~= "device" ) then return end
 
 	if ( tostring(bannerPlacementID) == "[YOUR-BANNER-PLACEMENT-ID]" or tostring(interstitialPlacementID) == "[YOUR-INTERSTITIAL-PLACEMENT-ID]" ) then
-		local alert = native.showAlert( "Important", 'Confirm that you have specified your Facebook placement IDs within "main.lua" (lines 28-29). Proceed to the Facebook guide for instructions.', { "OK", "guide" },
+		local alert = native.showAlert( "Important", 'Confirm that you have specified your Facebook placement IDs within "main.lua" on lines 28-29. Proceed to the Facebook guide for instructions.', { "OK", "guide" },
 			function( event )
 				if ( event.action == "clicked" and event.index == 2 ) then
 					system.openURL( "https://developers.facebook.com/docs/audience-network/getting-started" )
@@ -74,7 +75,7 @@ local function checkSetup()
 			end )
 	elseif ( tostring(deviceHash) == "[YOUR-DEVICE-HASH-ID]" ) then
 		fbAudienceNetwork.load( "banner", bannerPlacementID )
-		local alert = native.showAlert( "Important", 'For testing the Facebook Audience Network, you must follow Facebook protocol by gathering this device’s hash ID. With this device connected, find the "Test mode device hash" within the device console log, enter it within "main.lua" (line 34), and then build/run this sample again.', { "OK" } )
+		local alert = native.showAlert( "Important", 'For testing the Facebook Audience Network, you must follow Facebook protocol by gathering this device’s hash ID. With this device connected, find the "Test mode device hash" within the device console log, enter it within "main.lua" on line 34, and then build/run this sample again.', { "OK" } )
 	else
 		setupComplete = true
 	end
