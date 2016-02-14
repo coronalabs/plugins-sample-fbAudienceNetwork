@@ -35,7 +35,7 @@ function M:newUI( options )
 		if string.len( rt ) > 0 then readMeText = rt end
 		io.close( readMeFile ) ; readMeFile = nil ; rt = nil
 	end
-	
+
 	-- Create background image by theme value
 	local background = display.newImageRect( backGroup, "sampleUI/back-"..themeName..".png", 360, 640 )
 	background.x, background.y = display.contentCenterX, display.contentCenterY
@@ -83,6 +83,7 @@ function M:newUI( options )
 	-- Create info button (initially invisible)
 	local infoButton = display.newImageRect( frontGroup, "sampleUI/infobutton.png", 25, 25 ) ; infoButton.anchorX = 1
 	infoButton.isVisible = false
+	infoButton.id = "infoButton"
 
 	-- Create table for initial object positions
 	local objPos = { infoBoxOffY=0, infoBoxDestY=0 }
@@ -105,7 +106,7 @@ function M:newUI( options )
 	if buildNum then buildNum.x, buildNum.y = display.contentWidth+offsetX-7, display.contentHeight+offsetY-8 end
 	textGroupContainer.x = display.contentCenterX
 	infoButton.x, infoButton.y = display.contentWidth+offsetX-3, (barContainer.height/2)-offsetY-4
-	
+
 	-- Resize change handler
 	local function onResize( event )
 
@@ -115,7 +116,7 @@ function M:newUI( options )
 		if orientation ~= defaultOrientation then ox, oy = offsetY, offsetX end
 
 		if orientation == "portrait" then
-			background.x, background.y, background.rotation = display.contentCenterX, display.contentCenterY, 0			
+			background.x, background.y, background.rotation = display.contentCenterX, display.contentCenterY, 0
 		else
 			background.x, background.y, background.rotation = display.contentCenterX, display.contentCenterY, 90
 		end
@@ -129,7 +130,7 @@ function M:newUI( options )
 		if buildNum then buildNum.x, buildNum.y = display.contentWidth+ox-7, display.contentHeight+oy-8 end
 		textGroupContainer.x = display.contentCenterX
 		infoButton.x, infoButton.y = display.contentWidth+ox-3, (barContainer.height/2)-oy-4
-	
+
 		-- If info box is opening or already open, snap it entirely on screen
 		if ( infoBoxState == "opening" or infoBoxState == "canClose" ) then
 			transition.cancel( "infoBox" )
@@ -171,7 +172,7 @@ function M:newUI( options )
 		elseif themeName == "lightgrey" then infoBoxBack:setFillColor( 0.98 )
 		else infoBoxBack:setFillColor( 0.78 ) end
 		textGroupContainer:insert( infoBoxBack )
-	
+
 		-- Create the info text group
 		local infoTextGroup = display.newGroup()
 		textGroupContainer:insert( infoTextGroup )
@@ -181,7 +182,7 @@ function M:newUI( options )
 		infoText:setFillColor( 0 )
 		infoText.text = "\n"..readMeText.."\n\n"
 		infoText.anchorY = 0
-	
+
 		local textHeight = 240
 		if infoText.height < 240 then textHeight = infoText.height end
 
@@ -193,11 +194,11 @@ function M:newUI( options )
 		local anc = infoTextGroup.height/120
 		infoTextGroup.anchorChildren = true
 		infoTextGroup.anchorY = 1/anc
-	
+
 		-- Initially set info objects to invisible
 		infoTextGroup.isVisible = false
 		textGroupContainer.isVisible = false
-	
+
 		transComplete = function()
 
 			if infoBoxState == "opening" then
@@ -265,9 +266,11 @@ function M:newUI( options )
 		-- Set info button tap listener
 		infoButton.isVisible = true
 		infoButton:addEventListener( "touch", controlInfoBox )
+		infoButton.listener = controlInfoBox
 		screenShade:addEventListener( "touch", controlInfoBox )
 	end
 
+	self.infoButton = infoButton
 	self.titleBarBottom = barContainer.contentBounds.yMax
 	backGroup:toBack() ; self.backGroup = backGroup
 	frontGroup:toFront() ; self.frontGroup = frontGroup
