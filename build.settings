@@ -50,7 +50,7 @@ settings =
 		["plugin.fbAudienceNetwork"] =
 		{
 			publisherId = "com.coronalabs",
-			supportedPlatforms = { iphone=true, android=true, osx=true, win32=true }
+			supportedPlatforms = { iphone=true, android=true }
 		},
 	},
 }
