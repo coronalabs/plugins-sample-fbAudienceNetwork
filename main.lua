@@ -42,11 +42,11 @@ local appFont = sampleUI.appFont
 
 -- Table of data for menu buttons
 local menuButtons = {
-	loadBanner = { label="load banner ad", y=120, fill={ 0.16,0.36,0.56,1 } },
-	showBanner = { label="show banner ad", y=170, fill={ 0.14,0.34,0.54,1 } },
-	hideBanner = { label="hide banner ad", y=220, fill={ 0.12,0.32,0.52,1 } },
-	loadInterstitial = { label="load interstitial ad", y=285, fill={ 0.16,0.36,0.56,1 } },
-	showInterstitial = { label="show interstitial ad", y=335, fill={ 0.14,0.34,0.54,1 } }
+	loadBanner = { label="Load Banner Ad", y=120, fill={ 0.16,0.36,0.56,1 } },
+	showBanner = { label="Show Banner Ad", y=170, fill={ 0.14,0.34,0.54,1 } },
+	hideBanner = { label="Hide Banner Ad", y=220, fill={ 0.12,0.32,0.52,1 } },
+	loadInterstitial = { label="Load Interstitial Ad", y=285, fill={ 0.16,0.36,0.56,1 } },
+	showInterstitial = { label="Show Interstitial Ad", y=335, fill={ 0.14,0.34,0.54,1 } }
 }
 
 -- Set local variables
