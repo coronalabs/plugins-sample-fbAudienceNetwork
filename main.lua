@@ -42,11 +42,11 @@ local appFont = sampleUI.appFont
 
 -- Table of data for menu buttons
 local menuButtons = {
-	loadBanner = { label="Load Banner Ad", y=120, fill={ 0.16,0.36,0.56,1 } },
-	showBanner = { label="Show Banner Ad", y=170, fill={ 0.14,0.34,0.54,1 } },
-	hideBanner = { label="Hide Banner Ad", y=220, fill={ 0.12,0.32,0.52,1 } },
-	loadInterstitial = { label="Load Interstitial Ad", y=285, fill={ 0.16,0.36,0.56,1 } },
-	showInterstitial = { label="Show Interstitial Ad", y=335, fill={ 0.14,0.34,0.54,1 } }
+	loadBanner = { label="Load Banner Ad", y=120 },
+	showBanner = { label="Show Banner Ad", y=170 },
+	hideBanner = { label="Hide Banner Ad", y=220 },
+	loadInterstitial = { label="Load Interstitial Ad", y=285 },
+	showInterstitial = { label="Show Interstitial Ad", y=335 }
 }
 
 -- Set local variables
@@ -203,8 +203,8 @@ for k,v in pairs( menuButtons ) do
 			height = 32,
 			font = appFont,
 			fontSize = 16,
-			fillColor = { default = v.fill, over = v.fill },
-			labelColor = { default={ 1,1,1,1 }, over={ 1,1,1,0.8 } },
+			fillColor = { default={ 0.12,0.32,0.52,1 }, over={ 0.132,0.352,0.572,1 } },
+			labelColor = { default={ 1,1,1,1 }, over={ 1,1,1,1 } },
 			onRelease = onButtonRelease
 		})
 	button.x = display.contentCenterX + 10
