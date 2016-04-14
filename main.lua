@@ -60,6 +60,26 @@ local interstitialPrompt = display.newPolygon( mainGroup, 62, menuButtons["loadI
 interstitialPrompt:setFillColor( 0.8 )
 interstitialPrompt.alpha = 0
 
+-- Create spinner widget for indicating ad status
+widget.setTheme( "widget_theme_android_holo_light" )
+local spinner = widget.newSpinner( { x=display.contentCenterX, y=410, deltaAngle=10, incrementEvery=10 } )
+mainGroup:insert( spinner )
+spinner.alpha = 0
+
+
+-- Function to manage spinner appearance/animation
+local function manageSpinner( action )
+	if ( action == "show" ) then
+		spinner:start()
+		transition.cancel( "spinner" )
+		transition.to( spinner, { alpha=1, tag="spinner", time=((1-spinner.alpha)*320), transition=easing.outQuad } )
+	elseif ( action == "hide" ) then
+		transition.cancel( "spinner" )
+		transition.to( spinner, { alpha=0, tag="spinner", time=((1-(1-spinner.alpha))*320), transition=easing.outQuad,
+			onComplete=function() spinner:stop(); end } )
+	end
+end
+
 
 -- Function to update button visibility/state
 local function updateUI( params )
@@ -117,6 +137,7 @@ local function adListener( event )
 		elseif ( event.type == "interstitial" ) then
 			updateUI( { enable={ "showInterstitial" }, disable={ "loadInterstitial" }, interstitialPromptTo="showInterstitial" } )
 		end
+		manageSpinner( "hide" )
 
 	-- An interstitial ad was closed by the user
 	elseif ( event.phase == "closed" ) then
@@ -137,6 +158,7 @@ local function adListener( event )
 		elseif ( event.type == "interstitial" ) then
 			updateUI( { enable={ "loadInterstitial" }, disable={ "showInterstitial" }, interstitialPromptTo="loadInterstitial" } )
 		end
+		manageSpinner( "hide" )
 	end
 end
 
@@ -168,6 +190,7 @@ local function onButtonRelease( event )
 
 	if ( event.target.id == "loadBanner" ) then
 		fbAudienceNetwork.load( "banner", bannerPlacementID, "BANNER_HEIGHT_50" )
+		manageSpinner( "show" )
 
 	elseif ( event.target.id == "showBanner" ) then
 		if ( fbAudienceNetwork.isLoaded( bannerPlacementID ) == true ) then
@@ -181,6 +204,7 @@ local function onButtonRelease( event )
 
 	elseif ( event.target.id == "loadInterstitial" ) then
 		fbAudienceNetwork.load( "interstitial", interstitialPlacementID )
+		manageSpinner( "show" )
 
 	elseif ( event.target.id == "showInterstitial" ) then
 		if ( fbAudienceNetwork.isLoaded( interstitialPlacementID ) == true ) then
