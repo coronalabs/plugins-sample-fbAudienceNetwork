@@ -25,13 +25,12 @@ display.getCurrentStage():insert( sampleUI.frontGroup )
 
 -- Preset Facebook placement IDs (replace these with your own)
 -- See here for instructions: https://developers.facebook.com/docs/audience-network/getting-started
-local bannerPlacementID = "[YOUR-BANNER-PLACEMENT-ID]"
-local interstitialPlacementID = "[YOUR-INTERSTITIAL-PLACEMENT-ID]"
+local bannerPlacementID = "YOUR_BANNER_PLACEMENT_ID"
+local interstitialPlacementID = "YOUR_INTERSTITIAL_PLACEMENT_ID"
 
--- Set device hash ID for testing Facebook Ads
--- Alternatively, multiple test devices can be included in a table ( {"[DEVICE-1-HASH-ID]","[DEVICE-2-HASH-ID]"} )
+-- Multiple test devices can be included in a table array { "DEVICE_1_HASH_ID", "DEVICE_2_HASH_ID" }
 -- See here for instructions: https://docs.coronalabs.com/plugin/fbAudienceNetwork/init.html
-local deviceHash = "[YOUR-DEVICE-HASH-ID]"
+local deviceHashArray = { "YOUR_DEVICE_1_HASH_ID" }
 
 -- Require libraries/plugins
 local widget = require( "widget" )
@@ -120,7 +119,14 @@ end
 local function adListener( event )
 
 	-- Exit function if user hasn't set up testing parameters
-	if ( setupComplete == false ) then return end
+	if ( setupComplete == false ) then 
+		if ( event.phase == "init" ) then
+			fbAudienceNetwork.load( "banner", { placementId = bannerPlacementID })
+			local alert = native.showAlert( "Important", 'For testing the Facebook Audience Network, you must follow Facebook protocol by gathering this device’s hash ID. With this device connected, find the "Test mode device hash" within the device console log, enter it within "main.lua" on line 33, and then build/run this sample again.', { "OK" } )
+		end
+
+		return 
+	end
 
 	-- Successful initialization of the Facebook Audience Network
 	if ( event.phase == "init" ) then
@@ -168,17 +174,15 @@ local function checkSetup()
 
 	if ( system.getInfo( "environment" ) ~= "device" ) then return end
 
-	if ( tostring(bannerPlacementID) == "[YOUR-BANNER-PLACEMENT-ID]" or tostring(interstitialPlacementID) == "[YOUR-INTERSTITIAL-PLACEMENT-ID]" ) then
+	if ( tostring(bannerPlacementID) == "YOUR_BANNER_PLACEMENT_ID" or tostring(interstitialPlacementID) == "YOUR_INTERSTITIAL_PLACEMENT_ID" ) then
 		local alert = native.showAlert( "Important", 'Confirm that you have specified your Facebook placement IDs within "main.lua" on lines 28-29. Proceed to the Facebook guide for instructions.', { "OK", "guide" },
 			function( event )
 				if ( event.action == "clicked" and event.index == 2 ) then
 					system.openURL( "https://developers.facebook.com/docs/audience-network/getting-started" )
 				end
 			end )
-	elseif ( tostring(deviceHash) == "[YOUR-DEVICE-HASH-ID]" ) then
+	elseif ( tostring(deviceHashArray[1]) == "YOUR_DEVICE_1_HASH_ID" ) then
 		fbAudienceNetwork.init( adListener )
-		fbAudienceNetwork.load( "banner", bannerPlacementID )
-		local alert = native.showAlert( "Important", 'For testing the Facebook Audience Network, you must follow Facebook protocol by gathering this device’s hash ID. With this device connected, find the "Test mode device hash" within the device console log, enter it within "main.lua" on line 34, and then build/run this sample again.', { "OK" } )
 	else
 		setupComplete = true
 	end
@@ -189,13 +193,13 @@ end
 local function onButtonRelease( event )
 
 	if ( event.target.id == "loadBanner" ) then
-		fbAudienceNetwork.load( "banner", bannerPlacementID, "BANNER_HEIGHT_50" )
+		fbAudienceNetwork.load( "banner", { placementId = bannerPlacementID, bannerSize = "BANNER_HEIGHT_50" })
 		manageSpinner( "show" )
 
 	elseif ( event.target.id == "showBanner" ) then
 		if ( fbAudienceNetwork.isLoaded( bannerPlacementID ) == true ) then
 			updateUI( { enable={ "hideBanner" }, disable={ "loadBanner","showBanner" }, bannerPromptTo="hideBanner" } )
-			fbAudienceNetwork.show( "banner", bannerPlacementID, { yAlign="bottom" } )
+			fbAudienceNetwork.show( "banner", { placementId = bannerPlacementID, y="bottom" } )
 		end
 
 	elseif ( event.target.id == "hideBanner" ) then
@@ -203,12 +207,12 @@ local function onButtonRelease( event )
 		fbAudienceNetwork.hide( bannerPlacementID )
 
 	elseif ( event.target.id == "loadInterstitial" ) then
-		fbAudienceNetwork.load( "interstitial", interstitialPlacementID )
+		fbAudienceNetwork.load( "interstitial", { placementId = interstitialPlacementID } )
 		manageSpinner( "show" )
 
 	elseif ( event.target.id == "showInterstitial" ) then
 		if ( fbAudienceNetwork.isLoaded( interstitialPlacementID ) == true ) then
-			fbAudienceNetwork.show( "interstitial", interstitialPlacementID )
+			fbAudienceNetwork.show( "interstitial", { placementId = interstitialPlacementID } )
 		end
 	end
 	return true
@@ -244,4 +248,4 @@ end
 checkSetup()
 
 -- Initialize the Facebook Audience Network
-fbAudienceNetwork.init( adListener, deviceHash )
+fbAudienceNetwork.init( adListener, { testDevices = deviceHashArray } )
